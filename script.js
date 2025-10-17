@@ -430,3 +430,7 @@ document.addEventListener("DOMContentLoaded", () => {
   inicializarEditor();
   configurarEventListeners();
 });
+
+//================================
+//        sistema de tags
+//================================

@@ -666,7 +666,12 @@ abbr:hover::before,
   box-shadow: 0 4px 15px rgba(209, 202, 202, 0.342);
 }
 
-
+/* Esconder botão quando taskbar estiver aberta */
+#taskbar-tab.hidden {
+  opacity: 0;
+  transform: scale(0.9);
+  pointer-events: none;
+}
 
 #taskbar-tab.hidden {
   opacity: 0;
@@ -867,3 +872,4 @@ li.importante {
     margin: 10% auto;
   }
 }
+/* sistemas de tags */

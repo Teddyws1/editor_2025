@@ -398,30 +398,20 @@ function configurarEventListeners() {
       fecharTaskbar();
     }
   });
-   // Remove janela e qualquer ícone associado
-    elementos.container.removeChild(win);
+  // Remove janela e qualquer ícone associado
+  elementos.container.removeChild(win);
 
-    // Procura ícone correspondente na taskbar e remove
-    const icons = elementos.taskbar.querySelectorAll(".taskbar-icon");
-    icons.forEach(icon => {
-        if (icon.firstChild.textContent === win.querySelector(".window-title").textContent) {
-            elementos.taskbar.removeChild(icon);
-        }
-    });
-}
-
-
-  // Modal
-  elementos.openBtn.addEventListener("click", abrirModal);
-  elementos.closeBtn.addEventListener("click", fecharModal);
-  window.addEventListener("click", (e) => {
-    if (e.target === elementos.modal) fecharModal();
+  // Procura ícone correspondente na taskbar e remove
+  const icons = elementos.taskbar.querySelectorAll(".taskbar-icon");
+  icons.forEach((icon) => {
+    if (
+      icon.firstChild.textContent ===
+      win.querySelector(".window-title").textContent
+    ) {
+      elementos.taskbar.removeChild(icon);
+    }
   });
-
-  // Ajustes de layout
-  window.addEventListener("resize", ajustarBotaoTaskbar);
-  window.addEventListener("load", ajustarBotaoTaskbar);
-
+}
 
 // ================================
 //        INICIALIZAÇÃO GERAL
@@ -432,5 +422,41 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 //================================
-//        sistema de tags
+//      cards de aviso
 //================================
+const card = document.getElementById("testeCard");
+const closeBtn = document.getElementById("closeCard");
+
+// Abrir card
+function showCard() {
+  card.classList.add("show");
+
+  // Fecha automaticamente após 10 segundos
+  setTimeout(() => {
+    closeCard();
+  }, 10000);
+}
+
+// Fechar card com animação
+function closeCard() {
+  card.classList.add("hide");
+  card.classList.remove("show");
+
+  // Remove do DOM após animação
+  setTimeout(() => {
+    if (card.parentNode) card.parentNode.removeChild(card);
+  }, 600);
+}
+
+// Fecha ao clicar no botão
+closeBtn.addEventListener("click", closeCard);
+
+// Fecha ao clicar fora do card
+document.addEventListener("click", (e) => {
+  if (!card.contains(e.target)) {
+    closeCard();
+  }
+});
+
+// Mostrar card ao carregar página
+window.addEventListener("load", showCard);

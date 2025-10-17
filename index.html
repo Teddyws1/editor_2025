@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PixelCoder 👨‍💻</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.47.0/min/vs/loader.min.js"></script>
+    <link rel="shortcut icon" href="imagen/favicon_io (1)/favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <!-- Modal de Informações -->
+        <button id="openModalBtn" class="btn-open">
+            <abbr title="Detalhes do sistema">
+                <img src="https://icons.iconarchive.com/icons/amitjakhu/drip/16/information-icon.png" width="16" height="16" alt="Ícone de informações"> Informações
+            </abbr>
+        </button>
+
+        <!-- Modal Principal -->
+        <div id="modal" class="modal">
+            <div class="modal-content">
+                <span id="closeModalBtn" class="close">&times;</span>
+                <h2>Detalhes do Editor</h2>
+                
+                <h5>Informações sobre o Sistema</h5>
+                <ul>
+                    <li>Sistema de informação para o usuário</li>
+                    <li>Barra de pesquisa de código</li>
+                    <li>Busca com botão ou tecla "ENTER"</li>
+                    <li>Sistema de limpar pesquisa</li>
+                    <li>Sistema de limpar chat geral</li>
+                    <li>Janelas flutuantes</li>
+                    <li>Seletor de múltiplas linguagens</li>
+                </ul>
+
+                <div class="divisor-fina"></div>
+                
+                <h5>Sobre as Janelas</h5>
+                <p><strong>As janelas foram criadas para ajudar a guardar códigos e anotações</strong></p>
+                
+                <ul>
+                    <li>Sistema de abrir quantas janelas quiser</li>
+                    <li>Sistema de renomear</li>
+                    <li>Editor Monaco integrado</li>
+                    <li>Botões de controle (renomear, minimizar, fechar)</li>
+                    <li>Barra de pesquisa por códigos</li>
+                    <li>Sistema de esconder/mostrar janelas</li>
+                    <li>Taskbar lateral</li>
+                </ul>
+
+                <div class="divisor-fina"></div>
+                
+                <h2>Aviso Importante ⚠️</h2>
+                <ul>
+                    <li>Sistema ainda em fase de testes</li>
+                </ul>
+                <p>Sistema não compatível com mobile/tablet no momento</p>
+                <p>Pode ocorrer erros/bugs (chance de 8%)</p>
+            </div>
+        </div>
+
+        <!-- Controles de Busca -->
+        <input 
+            type="text" 
+            id="searchInput" 
+            placeholder="Pesquisar código..." 
+            title="Campo de pesquisa de código"
+        />
+        
+        <button class="btn-buscar" onclick="buscarTexto()" title="Buscar código">
+            <img src="https://icons.iconarchive.com/icons/aniket-suvarna/box-regular/16/bx-search-alt-icon.png" width="18" height="18" alt="Buscar"> Buscar
+        </button>
+
+        <button class="btn-limpar" onclick="limparBusca()" title="Limpar pesquisa">
+            <img src="https://icons.iconarchive.com/icons/pictogrammers/material/16/broom-icon.png" width="16" height="16" alt="Limpar"> Limpar
+        </button>
+
+        <!-- Botão Reset Chat -->
+        <button id="reset-btn" onclick="solicitarLimpezaChat()" title="Limpar todo o chat">
+            <img src="https://icons.iconarchive.com/icons/icons8/windows-8/16/Household-Broom-icon.png" width="16" height="16" alt="Limpar Chat"> Limpar Chat
+        </button>
+
+        <!-- Botão Nova Janela -->
+        <button id="newWindowBtn" onclick="criarNovaJanela()" title="Criar nova janela flutuante">
+            <img src="https://icons.iconarchive.com/icons/steve/zondicons/16/Window-New-icon.png" width="16" height="16" alt="Nova Janela"> Nova Janela
+        </button>
+
+        <!-- Seletor de Linguagem -->
+        <button onclick="alternarSeletorLinguagem()" title="Alternar seletor de linguagem">
+            <img src="https://icons.iconarchive.com/icons/fa-team/fontawesome-brands/16/FontAwesome-Code-icon.png" width="16" height="16" alt="Linguagem"> Linguagem
+        </button>
+        
+        <select 
+            id="languageSelector" 
+            class="oculto" 
+            onchange="atualizarLinguagem()"
+            title="Seletor de linguagem de programação"
+            aria-label="Selecione a linguagem de programação"
+        >
+            <option value="html">🌐 HTML</option>
+            <option value="css">🎨 CSS</option>
+            <option value="javascript">📜 JavaScript</option>
+            <option value="php">🐘 PHP</option>
+            <option value="python">🐍 Python</option>
+            <option value="csharp">💻 C#</option>
+        </select>
+    </div>
+
+    <!-- Editor + Preview -->
+    <div class="editor-container">
+        <div id="monaco-editor" title="Editor de código Monaco"></div>
+        <iframe 
+            id="live-preview" 
+            title="Pré-visualização do código" 
+            sandbox="allow-scripts allow-same-origin"
+            aria-label="Visualização do código executado"
+        ></iframe>
+    </div>
+
+    <!-- Contêiner de Janelas -->
+    <div id="windowsContainer" title="Área de janelas flutuantes"></div>
+
+    <!-- Modal de Renomear -->
+    <div class="modal" id="modalRenomear" role="dialog" aria-labelledby="modalRenomearTitle">
+        <div class="modal-content">
+            <h3 id="modalRenomearTitle">Renomear Janela</h3>
+            <input 
+                type="text" 
+                id="inputNovoNome" 
+                placeholder="Novo nome..." 
+                title="Digite o novo nome da janela"
+                aria-label="Campo para digitar novo nome da janela"
+            />
+            <div class="toast-buttons">
+                <button onclick="confirmarRenomear()" title="Confirmar renomeação">OK</button>
+                <button onclick="fecharJanelaRenomear()" title="Cancelar renomeação">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast de Confirmação -->
+    <div id="confirm-toast" class="toast" role="alert" aria-live="assertive">
+        <span data-tooltip="⚠️ Impossível recuperar após a confirmação ⚠️">
+            Deseja realmente limpar todo o chat?
+        </span>
+        <div class="toast-buttons">
+            <button id="confirm-yes" title="Confirmar limpeza do chat">Sim</button>
+            <button id="confirm-no" title="Cancelar limpeza do chat">Não</button>
+        </div>
+    </div>
+
+    <!-- Taskbar -->
+    <button id="taskbar-tab" title="Abrir/fechar taskbar">☰ Taskbar</button>
+    
+    <div id="taskbar" role="complementary" aria-label="Barra de tarefas lateral">
+        <button id="taskbar-close" title="Fechar taskbar">✖ Fechar</button>
+        
+        <div class="taskbar-icons" aria-label="Ícones da taskbar">
+            <!-- Ícones serão adicionados dinamicamente -->
+        </div>
+    </div>
+
+    <script src="script.js" defer></script>
+</body>
+</html>

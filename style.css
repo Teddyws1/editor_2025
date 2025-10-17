@@ -785,65 +785,153 @@ abbr:hover::before,
 }
 
 /* card aviso */
-/* Card geral */
-.card {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  width: 340px;
-  background: linear-gradient(354deg, #11586d, #2a2c41);
-  color: #fff;
-  border-radius: 16px;
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5);
-  overflow: hidden;
-  opacity: 0;
-  transform: translateY(-50px) scale(0.95);
-  transition: all 0.5s ease;
-  z-index: 9999;
-  font-family: Arial, sans-serif;
-  cursor: default;
+/* Overlay que bloqueia o fundo */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.3); /* escurece o fundo */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
 }
 
-/* Card visível */
-.card.show {
-  opacity: 1;
-  transform: translateY(0) scale(1);
+/* Card estilo iOS */
+.ios-card {
+    background: #f2f2f7;
+    color: #000;
+    padding: 20px 25px;
+    border-radius: 16px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+    min-width: 280px;
+    max-width: 350px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    opacity: 0;
+    transform: translateY(-50px);
+    transition: all 0.5s ease;
+    outline: none; /* importante para tabindex */
 }
 
-/* Conteúdo */
-.card-content {
-  padding: 20px;
-  position: relative;
+/* Mostrar card */
+.ios-card.show {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 /* Botão de fechar */
 .close-btn {
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  font-size: 22px;
-  cursor: pointer;
-  color: #fff;
-  transition: transform 0.3s ease, color 0.3s ease;
+    background: transparent;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: #555;
+    transition: color 0.3s;
 }
 .close-btn:hover {
-  transform: rotate(90deg);
-  color: #a09f9f;
+    color: #000;
 }
 
-/* Animação de desaparecer */
-.card.hide {
+/* Mensagem */
+.notification-message {
+    flex: 1;
+    margin-right: 10px;
+    font-size: 14px;
+}
+
+
+/* Header animado do editor */
+#editorHeader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 15px 0;
+    background: linear-gradient(90deg, #11586d, #2a2c41);
+    color: #ffd700;
+    text-align: center;
+    font-size: 2rem;
+    font-weight: bold;
+    z-index: 10000;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    animation: glowPulse 2s infinite, slidePulse 2s infinite;
+}
+
+/* Pulse + leve slide */
+@keyframes slidePulse {
+    0% { transform: translateY(-5px); }
+    50% { transform: translateY(0); }
+    100% { transform: translateY(-5px); }
+}
+
+/* Brilho animado */
+@keyframes glowPulse {
+    0% { text-shadow: 0 0 5px #ffd700, 0 0 10px #ffd700; }
+    50% { text-shadow: 0 0 15px #fff700, 0 0 30px #ffd700; }
+    100% { text-shadow: 0 0 5px #ffd700, 0 0 10px #ffd700; }
+}
+
+/* tela de boas vindas */
+/* Tela inteira */
+.welcome-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: var(--gradient-primary);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+/* Card central */
+.welcome-card {
+  background: linear-gradient(135deg, #11586d, #2a2c41);
+  padding: 30px;
+  border-radius: 14px;
+  text-align: center;
+  max-width: 400px;
+  color: #fff;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5);
+  opacity: 1;
+  transition: all 0.5s ease;
+}
+
+/* Título e parágrafo */
+.welcome-card h1 {
+  font-size: 2rem;
+  margin-bottom: 15px;
+}
+.welcome-card p {
+  font-size: 1.1rem;
+  margin-bottom: 25px;
+}
+
+/* Botão */
+.welcome-card button {
+  padding: 12px 25px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background: #ffd700;
+  color: #2a2c41;
+  transition: all 0.3s ease;
+}
+.welcome-card button:hover {
+  background: #ffeb3b;
+  transform: scale(1.05);
+}
+
+/* Animação ao fechar */
+.welcome-card.hide {
   opacity: 0;
-  transform: translateY(-30px) scale(0.8) rotate(-2deg);
-  transition: all 0.6s ease;
-}
-
-/* Brilho no texto ao hover */
-.card-content h2,
-.card-content p {
-  transition: text-shadow 0.4s ease;
-}
-.card-content:hover h2,
-.card-content:hover p {
-  text-shadow: 0 0 20px #ffffff, 0 0 20px #b6c909;
+  transform: scale(0.8);
 }

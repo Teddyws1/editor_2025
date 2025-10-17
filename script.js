@@ -424,39 +424,84 @@ document.addEventListener("DOMContentLoaded", () => {
 //================================
 //      cards de aviso
 //================================
-const card = document.getElementById("testeCard");
-const closeBtn = document.getElementById("closeCard");
+const overlay = document.getElementById('iosOverlay');
+const iosCard = document.getElementById('iosCard');
+const closeCardBtn = document.getElementById('closeCard');
 
-// Abrir card
+// Mostra o card com animação
 function showCard() {
-  card.classList.add("show");
-
-  // Fecha automaticamente após 10 segundos
-  setTimeout(() => {
-    closeCard();
-  }, 10000);
+    iosCard.classList.add('show');
+    iosCard.focus(); // foca dentro do card
 }
 
-// Fechar card com animação
+// Fecha o card com animação
 function closeCard() {
-  card.classList.add("hide");
-  card.classList.remove("show");
-
-  // Remove do DOM após animação
-  setTimeout(() => {
-    if (card.parentNode) card.parentNode.removeChild(card);
-  }, 600);
+    iosCard.classList.remove('show');
+    setTimeout(() => {
+        if(overlay.parentNode) overlay.parentNode.removeChild(overlay);
+    }, 500);
 }
 
 // Fecha ao clicar no botão
-closeBtn.addEventListener("click", closeCard);
+closeCardBtn.addEventListener('click', closeCard);
 
-// Fecha ao clicar fora do card
-document.addEventListener("click", (e) => {
-  if (!card.contains(e.target)) {
-    closeCard();
-  }
+// Fecha ao clicar fora do card (no overlay)
+overlay.addEventListener('click', (e) => {
+    if(e.target === overlay) { // garante que clicou no fundo
+        closeCard();
+    }
 });
+
+// Bloqueia foco fora do card
+overlay.addEventListener('keydown', (e) => {
+    if(e.key === "Tab") {
+        const focusable = iosCard.querySelectorAll('button, [tabindex]');
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+
+        if(e.shiftKey) { // shift + tab
+            if(document.activeElement === first) {
+                e.preventDefault();
+                last.focus();
+            }
+        } else { // tab
+            if(document.activeElement === last) {
+                e.preventDefault();
+                first.focus();
+            }
+        }
+    }
+});
+
+// Mostra card ao carregar
+window.addEventListener('load', showCard);
+
 
 // Mostrar card ao carregar página
 window.addEventListener("load", showCard);
+
+//tela de boas vinda
+const welcomeScreen = document.getElementById("welcomeScreen");
+const welcomeCard = document.querySelector(".welcome-card");
+const enterBtn = document.getElementById("enterBtn");
+
+// Função para fechar a tela de boas-vindas
+function closeWelcome() {
+    welcomeCard.classList.add('hide'); // animação do card
+
+    // Remove card e header após animação
+    setTimeout(() => {
+        welcomeScreen.style.display = 'none';
+        if(editorHeader) editorHeader.style.display = 'none';
+    }, 500);
+}
+
+// Ao clicar no botão “Entrar”
+enterBtn.addEventListener('click', closeWelcome);
+
+// Também pode remover automaticamente após 20 segundos
+setTimeout(() => {
+    if(welcomeScreen.style.display !== 'none') {
+        closeWelcome();
+    }
+}, 20000);

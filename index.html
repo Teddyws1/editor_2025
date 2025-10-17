@@ -13,6 +13,18 @@
     />
   </head>
   <body>
+<!-- Nome do editor no topo -->
+<header id="editorHeader">PixelCoder</header>
+    <!-- tela boas vindas-->
+<div id="welcomeScreen" class="welcome-screen">
+    <div class="welcome-card">
+        <h1>Bem-vindo(a)!</h1>
+        <p>Estamos felizes em te ver aqui. Clique no botão para continuar.</p>
+        <button id="enterBtn">Entrar</button>
+    </div>
+</div>
+
+
     <!-- Top Bar -->
     <div class="top-bar">
       <!-- Controles de Busca -->
@@ -108,7 +120,7 @@
 
     <!-- Editor + Preview -->
     <div class="editor-container">
-      <div id="monaco-editor" title="Editor de código Monaco"></div>
+      <div id="monaco-editor" title="seja bem vindo(a) ao pixel Coder"></div>
       <iframe
         id="live-preview"
         title="Pré-visualização do código"
@@ -173,16 +185,13 @@
       </div>
     </div>
     <!---card de aviso--->
-    <div id="testeCard" class="card">
-      <div class="card-content">
-        <span id="closeCard" class="close-btn">&times;</span>
-        <h2>Aviso!</h2>
-        <p>
-          Este sistema está em fase de testes. Algumas funcionalidades podem não
-          estar disponíveis.
-        </p>
-      </div>
+   <!-- Overlay e card -->
+<div id="iosOverlay" class="overlay">
+    <div id="iosCard" class="ios-card" tabindex="0">
+        <span class="notification-message">Este sistema está em fase de testes.</span>
+        <button class="close-btn" id="closeCard">&times;</button>
     </div>
+</div>
 
     <script src="script.js" defer></script>
   </body>

@@ -1,19 +1,23 @@
-// ================================
-//        VARIÁVEIS GLOBAIS
-// ================================
-let editor,
-  currentDecorations = [],
-  linguagemAtual = "html",
-  temaAtual = "dark",
-  janelaAlvo = null,
-  windowCount = 0;
+/* =====================================================
+   PIXELCODER - SCRIPT PRINCIPAL
+   Organização completa
+   ===================================================== */
 
-// ================================
-//          ELEMENTOS DOM
-// ================================
+/* =====================================================
+   VARIÁVEIS GLOBAIS
+   ===================================================== */
+let editor,
+  currentDecorations = [];
+let linguagemAtual = "html";
+let temaAtual = "dark";
+let janelaAlvo = null;
+let windowCount = 0;
+
+/* =====================================================
+   ELEMENTOS DOM PRINCIPAIS
+   ===================================================== */
 const elementos = {
   searchInput: document.getElementById("searchInput"),
-  languageSelector: document.getElementById("languageSelector"),
   resetBtn: document.getElementById("reset-btn"),
   toast: document.getElementById("confirm-toast"),
   yesBtn: document.getElementById("confirm-yes"),
@@ -31,9 +35,9 @@ const elementos = {
   inputNovoNome: document.getElementById("inputNovoNome"),
 };
 
-// ================================
-//      INICIALIZAÇÃO MONACO EDITOR
-// ================================
+/* =====================================================
+   INICIALIZAÇÃO DO MONACO EDITOR
+   ===================================================== */
 function inicializarEditor() {
   require.config({
     paths: {
@@ -51,37 +55,18 @@ function inicializarEditor() {
       wordWrap: "on",
     });
 
+    // Atualiza preview ao digitar
     const iframe = document.getElementById("live-preview");
     iframe.srcdoc = editor.getValue();
-
-    editor.getModel().onDidChangeContent(() => {
-      iframe.srcdoc = editor.getValue();
-    });
+    editor
+      .getModel()
+      .onDidChangeContent(() => (iframe.srcdoc = editor.getValue()));
   });
 }
 
-// ================================
-//      GERENCIAMENTO DE LINGUAGEM
-// ================================
-function atualizarLinguagem() {
-  const novaLingua = elementos.languageSelector.value;
-  linguagemAtual = novaLingua;
-  const valorAtual = editor.getValue();
-  const model = monaco.editor.createModel(valorAtual, linguagemAtual);
-  editor.setModel(model);
-}
-
-function alternarSeletorLinguagem() {
-  const seletor = elementos.languageSelector;
-  seletor.style.display =
-    seletor.style.display === "none" || seletor.style.display === ""
-      ? "inline-block"
-      : "none";
-}
-
-// ================================
-//           BUSCA
-// ================================
+/* =====================================================
+   SISTEMA DE BUSCA NO EDITOR
+   ===================================================== */
 function buscarTexto() {
   const termo = elementos.searchInput.value.trim();
   limparDecoracoes();
@@ -113,36 +98,39 @@ function limparDecoracoes() {
   currentDecorations = editor.deltaDecorations(currentDecorations, []);
 }
 
-// ================================
-//       JANELAS FLOUTANTES
-// ================================
+/* =====================================================
+   SISTEMA DE JANELAS FLUTUANTES
+   ===================================================== */
 function criarJanelaFlutuante() {
   windowCount++;
+
+  // Estrutura da nova janela
   const win = document.createElement("div");
   win.classList.add("floating-window");
   win.style.top = `${60 * windowCount}px`;
   win.style.left = `${60 * windowCount}px`;
 
   win.innerHTML = `
-        <div class="window-header">
-            <span class="window-title">Editor ${windowCount}</span>
-            <div class="window-controls">
-                <button class="renameBtn" title="Renomear janela">✎</button>
-                <button class="minimizeBtn" title="Minimizar janela">_</button>
-                <button class="closeBtn" title="Fechar janela">X</button>
-            </div>
+    <div class="window-header">
+        <span class="window-title">Editor ${windowCount}</span>
+        <div class="window-controls">
+            <button class="renameBtn" title="Renomear janela">✎</button>
+            <button class="minimizeBtn" title="Minimizar janela">_</button>
+            <button class="closeBtn" title="Fechar janela">X</button>
         </div>
-        <div class="window-body">
-            <input type="text" class="searchInput" placeholder="Pesquisar e marcar..." />
-            <div class="editor" id="editor${windowCount}"></div>
-            <div class="resize-handle"></div>
-        </div>
-    `;
+    </div>
+    <div class="window-body">
+        <input type="text" class="searchInput" placeholder="Pesquisar e marcar..." />
+        <div class="editor" id="editor${windowCount}"></div>
+        <div class="resize-handle"></div>
+    </div>
+  `;
 
   elementos.container.appendChild(win);
   configurarJanela(win, windowCount);
 }
 
+/* --- Configuração completa da janela --- */
 function configurarJanela(win, id) {
   const header = win.querySelector(".window-header");
   const minimizeBtn = win.querySelector(".minimizeBtn");
@@ -161,6 +149,7 @@ function configurarJanela(win, id) {
   inicializarEditorInterno(win, editorDiv, searchInput, resizeHandle);
 }
 
+/* --- Minimizar janela e criar ícone na taskbar --- */
 function minimizarJanela(win, titleSpan) {
   win.style.display = "none";
   const icon = document.createElement("div");
@@ -172,11 +161,13 @@ function minimizarJanela(win, titleSpan) {
   elementos.taskbar.appendChild(icon);
 }
 
+/* --- Restaurar janela ao clicar no ícone --- */
 function restaurarJanela(win, icon) {
   if (icon.associatedWindow) icon.associatedWindow.style.display = "flex";
   elementos.taskbar.removeChild(icon);
 }
 
+/* --- Sistema de arrastar janelas --- */
 function configurarArrastar(win, header) {
   let isDragging = false,
     offsetX,
@@ -195,6 +186,7 @@ function configurarArrastar(win, header) {
   document.addEventListener("mouseup", () => (isDragging = false));
 }
 
+/* --- Editor interno de cada janela --- */
 function inicializarEditorInterno(win, editorDiv, searchInput, resizeHandle) {
   require(["vs/editor/editor.main"], () => {
     const fEditor = monaco.editor.create(editorDiv, {
@@ -205,6 +197,7 @@ function inicializarEditorInterno(win, editorDiv, searchInput, resizeHandle) {
       wordWrap: "on",
     });
 
+    // Busca interna na janela
     searchInput.addEventListener("input", () => {
       fEditor.deltaDecorations([], []);
       const value = searchInput.value;
@@ -230,29 +223,9 @@ function inicializarEditorInterno(win, editorDiv, searchInput, resizeHandle) {
   });
 }
 
-function configurarRedimensionamento(win, editorDiv, fEditor, resizeHandle) {
-  let isResizing = false,
-    startY,
-    startHeight;
-  resizeHandle.addEventListener("mousedown", (e) => {
-    isResizing = true;
-    startY = e.clientY;
-    startHeight = editorDiv.offsetHeight;
-    e.preventDefault();
-  });
-  document.addEventListener("mousemove", (e) => {
-    if (isResizing) {
-      const dy = e.clientY - startY;
-      editorDiv.style.height = `${startHeight + dy}px`;
-      fEditor.layout();
-    }
-  });
-  document.addEventListener("mouseup", () => (isResizing = false));
-}
-
-// ================================
-//        RENOMEAR JANELA
-// ================================
+/* =====================================================
+   RENOMEAR JANELAS
+   ===================================================== */
 function abrirModalRenomear(titleSpan) {
   janelaAlvo = titleSpan;
   elementos.modalRenomear.style.display = "flex";
@@ -271,22 +244,25 @@ function confirmarRenomear() {
   fecharJanelaRenomear();
 }
 
-// ================================
-//         LIMPEZA DO CHAT
-// ================================
+/* =====================================================
+   LIMPEZA COMPLETA DO CHAT / EDITOR
+   ===================================================== */
 function solicitarLimpezaChat() {
   elementos.toast.classList.add("show");
 }
 
 function limparChatCompleto() {
   elementos.toast.classList.remove("show");
+
   if (editor) {
     editor.setValue("");
     limparDecoracoes();
   }
+
   const iframe = document.getElementById("live-preview");
   if (iframe) iframe.srcdoc = "";
 
+  // Remove janelas abertas
   elementos.container.querySelectorAll(".floating-window").forEach((win) => {
     if (win.style.display !== "none") elementos.container.removeChild(win);
   });
@@ -295,6 +271,7 @@ function limparChatCompleto() {
   mostrarAviso("Chat e janelas limpas ✅");
 }
 
+/* --- Card de aviso flutuante --- */
 function mostrarAviso(mensagem) {
   const aviso = document.createElement("div");
   aviso.textContent = mensagem;
@@ -320,9 +297,9 @@ function mostrarAviso(mensagem) {
   setTimeout(() => aviso.remove(), 2600);
 }
 
-// ================================
-//           TASKBAR
-// ================================
+/* =====================================================
+   SISTEMA DE TASKBAR (BARRA LATERAL)
+   ===================================================== */
 function abrirTaskbar() {
   elementos.taskbar.classList.add("open");
   elementos.mainContent.classList.add("blur");
@@ -335,36 +312,24 @@ function fecharTaskbar() {
   elementos.taskbarTab.classList.remove("hidden");
 }
 
-function ajustarBotaoTaskbar() {
-  const contentRect = elementos.mainContent.getBoundingClientRect();
-  const buttonRect = elementos.taskbarTab.getBoundingClientRect();
-
-  if (
-    buttonRect.bottom > contentRect.bottom ||
-    buttonRect.right > contentRect.right
-  ) {
-    elementos.taskbarTab.style.bottom = "20px";
-    elementos.taskbarTab.style.right = "20px";
-  }
-}
-
-// ================================
-//         MODAL PRINCIPAL
-// ================================
+/* =====================================================
+   MODAL PRINCIPAL (DETALHES)
+   ===================================================== */
 function abrirModal() {
   elementos.modal.style.display = "flex";
   document.body.style.overflow = "hidden";
 }
+
 function fecharModal() {
   elementos.modal.style.display = "none";
   document.body.style.overflow = "auto";
 }
 
-// ================================
-//       CONFIGURAÇÃO DE EVENTOS
-// ================================
+/* =====================================================
+   CONFIGURAÇÃO DE EVENTOS GLOBAIS
+   ===================================================== */
 function configurarEventListeners() {
-  // Busca
+  // Busca principal
   elementos.searchInput.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -372,14 +337,14 @@ function configurarEventListeners() {
     }
   });
 
-  // Limpeza
+  // Confirmação de limpeza
   elementos.resetBtn.addEventListener("click", solicitarLimpezaChat);
   elementos.noBtn.addEventListener("click", () =>
     elementos.toast.classList.remove("show")
   );
   elementos.yesBtn.addEventListener("click", limparChatCompleto);
 
-  // Janelas
+  // Janelas flutuantes
   elementos.newWindowBtn.addEventListener("click", criarJanelaFlutuante);
 
   // Taskbar
@@ -389,6 +354,7 @@ function configurarEventListeners() {
   });
   elementos.taskbarClose.addEventListener("click", fecharTaskbar);
 
+  // Fechar taskbar ao clicar fora
   document.addEventListener("click", (e) => {
     if (
       elementos.taskbar.classList.contains("open") &&
@@ -398,110 +364,79 @@ function configurarEventListeners() {
       fecharTaskbar();
     }
   });
-  // Remove janela e qualquer ícone associado
-  elementos.container.removeChild(win);
-
-  // Procura ícone correspondente na taskbar e remove
-  const icons = elementos.taskbar.querySelectorAll(".taskbar-icon");
-  icons.forEach((icon) => {
-    if (
-      icon.firstChild.textContent ===
-      win.querySelector(".window-title").textContent
-    ) {
-      elementos.taskbar.removeChild(icon);
-    }
-  });
 }
 
-// ================================
-//        INICIALIZAÇÃO GERAL
-// ================================
+/* =====================================================
+   INICIALIZAÇÃO GERAL DO SISTEMA
+   ===================================================== */
 document.addEventListener("DOMContentLoaded", () => {
   inicializarEditor();
   configurarEventListeners();
 });
 
-//================================
-//      cards de aviso
-//================================
-const overlay = document.getElementById('iosOverlay');
-const iosCard = document.getElementById('iosCard');
-const closeCardBtn = document.getElementById('closeCard');
+/* =====================================================
+   CARD DE AVISO ESTILO iOS
+   ===================================================== */
+const overlay = document.getElementById("iosOverlay");
+const iosCard = document.getElementById("iosCard");
+const closeCardBtn = document.getElementById("closeCard");
 
-// Mostra o card com animação
-function showCard() {
-    iosCard.classList.add('show');
-    iosCard.focus(); // foca dentro do card
-}
-
-// Fecha o card com animação
-function closeCard() {
-    iosCard.classList.remove('show');
-    setTimeout(() => {
-        if(overlay.parentNode) overlay.parentNode.removeChild(overlay);
-    }, 500);
-}
-
-// Fecha ao clicar no botão
-closeCardBtn.addEventListener('click', closeCard);
-
-// Fecha ao clicar fora do card (no overlay)
-overlay.addEventListener('click', (e) => {
-    if(e.target === overlay) { // garante que clicou no fundo
-        closeCard();
-    }
-});
-
-// Bloqueia foco fora do card
-overlay.addEventListener('keydown', (e) => {
-    if(e.key === "Tab") {
-        const focusable = iosCard.querySelectorAll('button, [tabindex]');
-        const first = focusable[0];
-        const last = focusable[focusable.length - 1];
-
-        if(e.shiftKey) { // shift + tab
-            if(document.activeElement === first) {
-                e.preventDefault();
-                last.focus();
-            }
-        } else { // tab
-            if(document.activeElement === last) {
-                e.preventDefault();
-                first.focus();
-            }
-        }
-    }
-});
-
-// Mostra card ao carregar
-window.addEventListener('load', showCard);
-
-
-// Mostrar card ao carregar página
+// Mostra o card ao carregar
 window.addEventListener("load", showCard);
+function showCard() {
+  iosCard.classList.add("show");
+  iosCard.focus();
+}
 
-//tela de boas vinda
+// Fecha o card
+function closeCard() {
+  iosCard.classList.remove("show");
+  setTimeout(() => {
+    if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+  }, 500);
+}
+
+// Eventos de fechamento
+closeCardBtn.addEventListener("click", closeCard);
+overlay.addEventListener("click", (e) => {
+  if (e.target === overlay) closeCard();
+});
+
+// Mantém o foco dentro do card (acessibilidade)
+overlay.addEventListener("keydown", (e) => {
+  if (e.key === "Tab") {
+    const focusable = iosCard.querySelectorAll("button, [tabindex]");
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  }
+});
+
+/* =====================================================
+   TELA DE BOAS-VINDAS ANIMADA
+   ===================================================== */
 const welcomeScreen = document.getElementById("welcomeScreen");
 const welcomeCard = document.querySelector(".welcome-card");
 const enterBtn = document.getElementById("enterBtn");
 
-// Função para fechar a tela de boas-vindas
 function closeWelcome() {
-    welcomeCard.classList.add('hide'); // animação do card
-
-    // Remove card e header após animação
-    setTimeout(() => {
-        welcomeScreen.style.display = 'none';
-        if(editorHeader) editorHeader.style.display = 'none';
-    }, 500);
+  welcomeCard.classList.add("hide");
+  setTimeout(() => {
+    welcomeScreen.style.display = "none";
+    const editorHeader = document.getElementById("editorHeader");
+    if (editorHeader) editorHeader.style.display = "none";
+  }, 500);
 }
 
-// Ao clicar no botão “Entrar”
-enterBtn.addEventListener('click', closeWelcome);
+enterBtn.addEventListener("click", closeWelcome);
 
-// Também pode remover automaticamente após 20 segundos
+// Fecha automaticamente após 20 segundos
 setTimeout(() => {
-    if(welcomeScreen.style.display !== 'none') {
-        closeWelcome();
-    }
-}, 20000);
+  if (welcomeScreen.style.display !== "none") closeWelcome();
+}, 90000000);

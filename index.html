@@ -13,18 +13,16 @@
     />
   </head>
   <body>
-<!-- Nome do editor no topo -->
+    <!-- Nome do editor no topo -->
 <header id="editorHeader">PixelCoder</header>
     <!-- tela boas vindas-->
-<div id="welcomeScreen" class="welcome-screen">
-    <div class="welcome-card">
+    <div id="welcomeScreen" class="welcome-screen">
+      <div class="welcome-card">
         <h1>Bem-vindo(a)!</h1>
         <p>Estamos felizes em te ver aqui. Clique no botão para continuar.</p>
         <button id="enterBtn">Entrar</button>
+      </div>
     </div>
-</div>
-
-
     <!-- Top Bar -->
     <div class="top-bar">
       <!-- Controles de Busca -->
@@ -88,34 +86,6 @@
         />
         Nova Janela
       </button>
-
-      <!-- Seletor de Linguagem -->
-      <button
-        onclick="alternarSeletorLinguagem()"
-        title="Alternar seletor de linguagem"
-      >
-        <img
-          src="https://icons.iconarchive.com/icons/ionic/ionicons/16/language-icon.png"
-          width="16"
-          height="16"
-          alt=""
-        />Linguagem
-      </button>
-
-      <select
-        id="languageSelector"
-        class="oculto"
-        onchange="atualizarLinguagem()"
-        title="Seletor de linguagem de programação"
-        aria-label="Selecione a linguagem de programação"
-      >
-        <option value="html">🌐 HTML</option>
-        <option value="css">🎨 CSS</option>
-        <option value="javascript">📜 JavaScript</option>
-        <option value="php">🐘 PHP</option>
-        <option value="python">🐍 Python</option>
-        <option value="csharp">💻 C#</option>
-      </select>
     </div>
 
     <!-- Editor + Preview -->
@@ -171,7 +141,14 @@
     </div>
 
     <!-- Taskbar -->
-    <button id="taskbar-tab" title="Abrir/fechar taskbar">☰ Taskbar</button>
+    <button id="taskbar-tab" title="Abrir/fechar taskbar">
+      <img
+        src="https://icons.iconarchive.com/icons/iconoir-team/iconoir/32/open-in-window-icon.png"
+        width="25"
+        height="25"
+        alt=""
+      />
+    </button>
 
     <div
       id="taskbar"
@@ -185,14 +162,14 @@
       </div>
     </div>
     <!---card de aviso--->
-   <!-- Overlay e card -->
-<div id="iosOverlay" class="overlay">
-    <div id="iosCard" class="ios-card" tabindex="0">
-        <span class="notification-message">Este sistema está em fase de testes.</span>
+    <div id="iosOverlay" class="overlay">
+      <div id="iosCard" class="ios-card" tabindex="0">
+        <span class="notification-message"
+          >Este sistema está em fase de testes.</span
+        >
         <button class="close-btn" id="closeCard">&times;</button>
+      </div>
     </div>
-</div>
-
     <script src="script.js" defer></script>
   </body>
 </html>
